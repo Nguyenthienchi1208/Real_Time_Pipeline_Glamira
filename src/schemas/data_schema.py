@@ -27,7 +27,6 @@ cart_products_schema = StructType([
     StructField("amount", StringType(), True),
     StructField("price", StringType(), True),
     StructField("currency", StringType(), True),
-    # Trong cart_products lại có một mảng option nhỏ hơn nữa
     StructField("option", ArrayType(option_schema), True)
 ])
 

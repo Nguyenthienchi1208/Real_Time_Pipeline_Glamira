@@ -15,8 +15,9 @@ docker run --rm -it \
   -e HOME=/home/spark \
   -e HADOOP_CONF_DIR=/spark/conf/ \
   -e KAFKA_BOOTSTRAP_SERVERS="${KAFKA_BOOTSTRAP_SERVERS:-localhost:9094}" \
-  -e KAFKA_SASL_JAAS_CONFIG="${KAFKA_SASL_JAAS_CONFIG:-org.apache.kafka.common.security.plain.PlainLoginModule required username=\"kafka\" password=\"change_me_rotate_this_password\";}" \
-  -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-change_me_rotate_this_password}" \
+  -e KAFKA_SASL_JAAS_CONFIG="${KAFKA_SASL_JAAS_CONFIG:-}" \
+  -e KAFKA_PASSWORD="${KAFKA_PASSWORD:-}" \
+  -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-}" \
   -e POSTGRES_HOST="${POSTGRES_HOST:-postgres}" \
   -e POSTGRES_PORT="${POSTGRES_PORT:-5432}" \
   unigap/spark:3.5 bash -lc '

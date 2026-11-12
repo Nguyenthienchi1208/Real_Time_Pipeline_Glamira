@@ -1,20 +1,24 @@
-from pyspark.sql import functions as F
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+import logging
 import os
 
+from pyspark.sql import functions as F
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+
 from utils.surrogate_keys import location_sk_expr, UNKNOWN_SK
+
+logger = logging.getLogger(__name__)
+
 
 def process_dim_location(df):
 
     def _get_worker_mmdb_path():
-
         if os.path.exists("./GeoLite2-City.mmdb"):
             return os.path.abspath("./GeoLite2-City.mmdb")
-        
+
         candidates = [
             "/opt/spark/app/src/data/GeoLite2-City.mmdb",
             "/spark/src/data/GeoLite2-City.mmdb",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "GeoLite2-City.mmdb")
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "GeoLite2-City.mmdb"),
         ]
         for p in candidates:
             abs_path = os.path.normpath(p)
@@ -24,16 +28,19 @@ def process_dim_location(df):
 
     def process_partition(iterator):
         mmdb_path = _get_worker_mmdb_path()
-        
+
+        if not mmdb_path:
+            logger.warning("GeoLite2-City.mmdb not found; skipping geolocation enrichment for dim_location")
+            return
+
         reader = None
         try:
-            if not mmdb_path:
-                return
             try:
                 import maxminddb
             except ImportError:
-
+                logger.warning("maxminddb is not installed; skipping geolocation enrichment for dim_location")
                 return
+
             reader = maxminddb.open_database(mmdb_path)
 
             for row in iterator:
@@ -77,13 +84,15 @@ def process_dim_location(df):
         StructField("longitude", DoubleType(), True),
     ])
 
+    empty_dim = spark.createDataFrame([], StructType(schema.fields + [
+        StructField("location_sk", StringType(), True),
+    ])).select(
+        "location_sk", "ip", "country", "region", "city", "latitude", "longitude"
+    )
+
     df_dim = spark.createDataFrame(rdd, schema)
     if df_dim.limit(1).count() == 0:
-        return spark.createDataFrame([], StructType(schema.fields + [
-            StructField("location_sk", StringType(), True),
-        ])).select(
-            "location_sk", "ip", "country", "region", "city", "latitude", "longitude"
-        )
+        return empty_dim
 
     df_dim = df_dim.withColumn("location_sk", location_sk_expr())
     df_dim = df_dim.filter(F.col("location_sk") != UNKNOWN_SK)

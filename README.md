@@ -106,21 +106,7 @@ Fact table lưu trữ các customer behaviour events và các foreign key liên 
 
 ---
 
-## 6. Secret & environment
-
-- Không lưu mật khẩu hoặc secret trực tiếp trong repo.
-- Tạo file local `.env` từ `.env.example` và điền credential thật của môi trường của bạn.
-- Các file cấu hình đọc biến môi trường như `POSTGRES_PASSWORD`, `KAFKA_PASSWORD`, `KAFKA_SASL_JAAS_CONFIG`.
-- Nếu phát hiện secret đã bị lộ trong repo, rotate password ngay và cập nhật `.env` cùng các môi trường deploy tương ứng.
-
-### Example
-
-```bash
-cp .env.example .env
-# chỉnh các giá trị thực trước khi chạy docker / spark
-```
-
-## 7. Dashboard
+## 6. Dashboard
 
 ### Streamlit Dashboard
 
@@ -135,5 +121,60 @@ Các nội dung phân tích:
 * Hourly View Trends
 * Browser
 * Operating System
+
+---
+
+## 7. CI / Operational Readiness
+
+### 7.1 Continuous Integration
+
+Repo đã có workflow CI định kỳ chạy trên GitHub Actions:
+
+- trigger trên push và pull request vào nhánh `main` / `master`
+- cài đặt Python 3.12
+- cài đặt dependencies cần thiết
+- chạy `pytest -q` với `PYTHONPATH=src`
+
+File workflow: `.github/workflows/ci.yml`
+
+### 7.2 Runbook
+
+Hướng dẫn vận hành và xử lý sự cố nằm ở:
+
+- `docs/runbook.md`
+
+Nội dung chính:
+
+* khởi động environment
+* run live / dry-run / backfill
+* cách kiểm tra batch status
+* xử lý lỗi batch / duplicate / SLA
+* checklist phục hồi hệ thống
+
+### 7.3 Data Dictionary
+
+Tài liệu mô tả schema fact/dimension/operational tables nằm ở:
+
+- `docs/data-dictionary.md`
+
+### 7.4 Operational notes
+
+* Không commit file `.env` chứa secret thực tế
+* Dùng `.env.example` làm template
+* Giữ các biến môi trường cho Kafka và PostgreSQL ở runtime
+* Có thể dùng `batch_runs` và `quarantine_events` để giám sát và phục hồi pipeline
+
+---
+
+## 8. Quick Start
+
+```bash
+cp .env.example .env
+# cập nhật các giá trị Kafka / PostgreSQL thực tế
+
+docker compose up -d
+PYTHONPATH=src pytest -q
+PYTHONPATH=src python src/main.py --dry-run
+```
 
 

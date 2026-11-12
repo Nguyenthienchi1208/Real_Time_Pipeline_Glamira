@@ -1,9 +1,6 @@
-"""Enrich events with domain-country, browser, and OS for fact reporting."""
-
 from pyspark.sql import functions as F
 from pyspark.sql.types import StringType, StructType, StructField
 
-# Country from Glamira storefront domain (TLD), not IP GeoIP
 DOMAIN_COUNTRY = {
     "fr": "France",
     "de": "Germany",
@@ -88,7 +85,6 @@ def _domain_country(host: str):
 
 
 def enrich_event_attrs(df):
-    """Add domain, country_domain, browser, os from current_url / user_agent."""
     parse_ua_udf = F.udf(_parse_ua, _UA_SCHEMA)
     domain_udf = F.udf(_domain_country, _DOMAIN_SCHEMA)
 

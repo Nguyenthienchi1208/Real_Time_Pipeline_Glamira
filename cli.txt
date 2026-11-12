@@ -8,7 +8,7 @@ docker run --rm -ti --name test-spark \
   --env-file .env \
   -e KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS:-localhost:9094} \
   -e HADOOP_CONF_DIR=/spark/conf/ \
-  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password} \
+  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-} \
   -e POSTGRES_HOST=${POSTGRES_HOST:-postgres} \
   -e POSTGRES_PORT=${POSTGRES_PORT:-5432} \
   unigap/spark:3.5 bash -c "
@@ -24,10 +24,10 @@ docker run --rm -ti --name test-spark \
       --conf 'spark.driver.extraJavaOptions=-Djava.security.auth.login.config=./kafka_jaas.conf' \
       --conf 'spark.yarn.appMasterEnv.PYSPARK_PYTHON=/home/spark/miniconda3/envs/my_env/bin/python' \
       --conf 'spark.executorEnv.PYSPARK_PYTHON=/home/spark/miniconda3/envs/my_env/bin/python' \
-      --conf 'spark.yarn.appMasterEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password}' \
+      --conf 'spark.yarn.appMasterEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}' \
       --conf 'spark.yarn.appMasterEnv.POSTGRES_HOST=${POSTGRES_HOST:-postgres}' \
       --conf 'spark.yarn.appMasterEnv.POSTGRES_PORT=${POSTGRES_PORT:-5432}' \
-      --conf 'spark.executorEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password}' \
+      --conf 'spark.executorEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}' \
       --conf 'spark.executorEnv.POSTGRES_HOST=${POSTGRES_HOST:-postgres}' \
       --conf 'spark.executorEnv.POSTGRES_PORT=${POSTGRES_PORT:-5432}' \
       --executor-memory 2G \

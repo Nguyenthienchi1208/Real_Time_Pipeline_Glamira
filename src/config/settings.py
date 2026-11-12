@@ -3,6 +3,10 @@ from config.logger_config import setup_logger
 
 logger = setup_logger("ConfigSettings")
 
+KAFKA_USERNAME = os.getenv("KAFKA_USERNAME", "kafka")
+KAFKA_PWD = os.getenv("KAFKA_PASSWORD") or ""
+KAFKA_JAAS = os.getenv("KAFKA_SASL_JAAS_CONFIG") or ""
+
 KAFKA_CONFIG = {
     "bootstrap_servers": os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9094"),
     "topic": os.getenv("KAFKA_TOPIC", "product_view"),
@@ -11,30 +15,26 @@ KAFKA_CONFIG = {
     "fail_on_data_loss": os.getenv("KAFKA_FAIL_ON_DATA_LOSS", "false"),
     "security_protocol": os.getenv("KAFKA_SECURITY_PROTOCOL", "SASL_PLAINTEXT"),
     "sasl_mechanism": os.getenv("KAFKA_SASL_MECHANISM", "PLAIN"),
-    "sasl_jaas_config": os.getenv(
-        "KAFKA_SASL_JAAS_CONFIG",
-        "org.apache.kafka.common.security.plain.PlainLoginModule required username='kafka' password='change_me_rotate_this_password';"
-    ),
+    "sasl_jaas_config": KAFKA_JAAS,
 }
 
 DB_USER = os.getenv("POSTGRES_USER", "postgres")
-DB_PASSWORD = os.getenv("POSTGRES_PASSWORD", "change_me_rotate_this_password")
+DB_PWD = os.getenv("POSTGRES_PASSWORD") or ""
 DB_HOST = os.getenv("POSTGRES_HOST", "postgres")
 DB_PORT = os.getenv("POSTGRES_PORT", "5432")
 DB_NAME = os.getenv("POSTGRES_DB", "postgres")
 
-
 DB_URL = f"jdbc:postgresql://{DB_HOST}:{DB_PORT}/{DB_NAME}"
 DB_PROPERTIES = {
     "user": DB_USER,
-    "password": DB_PASSWORD,
+    "password": DB_PWD,
     "driver": "org.postgresql.Driver"
 }
 
 POSTGRES_CONFIG = {
     "url": DB_URL,
     "user": DB_USER,
-    "password": DB_PASSWORD,
+    "password": DB_PWD,
     "driver": "org.postgresql.Driver",
 }
 

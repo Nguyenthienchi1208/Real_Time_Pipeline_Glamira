@@ -34,7 +34,7 @@ def test_customer_sk_falls_back_to_device_id(spark):
     data = [{
         "user_id_db": "",
         "device_id": "device-abc",
-        "email_address": None,
+        "email_address": "",
         "user_agent": "ua",
         "resolution": "1x1",
         "time_stamp": 1591266092,
