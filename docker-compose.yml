@@ -107,12 +107,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "UnigapPostgres@123"
-      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-change_me_rotate_this_password}"
+      POSTGRES_DB: "${POSTGRES_DB:-postgres}"
       PGDATA: "/var/lib/postgresql/data"
     ports:
-      - "5433:5432"
+      - "5434:5432"
+    env_file:
+      - .env
 
   adminer:
     image: "adminer:4.8.1"

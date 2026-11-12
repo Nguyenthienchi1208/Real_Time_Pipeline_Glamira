@@ -25,9 +25,9 @@ def _env(name: str, default: str) -> str:
 @lru_cache(maxsize=1)
 def get_engine():
     host = _env("POSTGRES_HOST", "localhost")
-    port = _env("POSTGRES_PORT", "5433")
+    port = _env("POSTGRES_PORT", "5432")
     user = _env("POSTGRES_USER", "postgres")
-    password = _env("POSTGRES_PASSWORD", "UnigapPostgres@123")
+    password = _env("POSTGRES_PASSWORD", "change_me_rotate_this_password")
     db = _env("POSTGRES_DB", "postgres")
     url = f"postgresql+psycopg2://{user}:{quote_plus(password)}@{host}:{port}/{db}"
     return create_engine(url, pool_pre_ping=True, pool_size=3, max_overflow=2)

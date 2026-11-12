@@ -106,7 +106,21 @@ Fact table lưu trữ các customer behaviour events và các foreign key liên 
 
 ---
 
-## 6. Dashboard
+## 6. Secret & environment
+
+- Không lưu mật khẩu hoặc secret trực tiếp trong repo.
+- Tạo file local `.env` từ `.env.example` và điền credential thật của môi trường của bạn.
+- Các file cấu hình đọc biến môi trường như `POSTGRES_PASSWORD`, `KAFKA_PASSWORD`, `KAFKA_SASL_JAAS_CONFIG`.
+- Nếu phát hiện secret đã bị lộ trong repo, rotate password ngay và cập nhật `.env` cùng các môi trường deploy tương ứng.
+
+### Example
+
+```bash
+cp .env.example .env
+# chỉnh các giá trị thực trước khi chạy docker / spark
+```
+
+## 7. Dashboard
 
 ### Streamlit Dashboard
 

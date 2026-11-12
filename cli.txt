@@ -5,11 +5,12 @@ docker run --rm -ti --name test-spark \
   -v ./:/spark \
   -v spark_lib:/home/spark/.ivy2 \
   -v spark_data:/data \
-  -e KAFKA_BOOTSTRAP_SERVERS=46.202.167.130:9094 \
+  --env-file .env \
+  -e KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS:-localhost:9094} \
   -e HADOOP_CONF_DIR=/spark/conf/ \
-  -e POSTGRES_PASSWORD='UnigapPostgres@123' \
-  -e POSTGRES_HOST='postgres' \
-  -e POSTGRES_PORT='5432' \
+  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password} \
+  -e POSTGRES_HOST=${POSTGRES_HOST:-postgres} \
+  -e POSTGRES_PORT=${POSTGRES_PORT:-5432} \
   unigap/spark:3.5 bash -c "
     apt-get update && apt-get install -y zip && \
     cd /spark/src && zip -r /tmp/src_code.zip ./* && \
@@ -23,12 +24,12 @@ docker run --rm -ti --name test-spark \
       --conf 'spark.driver.extraJavaOptions=-Djava.security.auth.login.config=./kafka_jaas.conf' \
       --conf 'spark.yarn.appMasterEnv.PYSPARK_PYTHON=/home/spark/miniconda3/envs/my_env/bin/python' \
       --conf 'spark.executorEnv.PYSPARK_PYTHON=/home/spark/miniconda3/envs/my_env/bin/python' \
-      --conf 'spark.yarn.appMasterEnv.POSTGRES_PASSWORD=UnigapPostgres@123' \
-      --conf 'spark.yarn.appMasterEnv.POSTGRES_HOST=postgres' \
-      --conf 'spark.yarn.appMasterEnv.POSTGRES_PORT=5432' \
-      --conf 'spark.executorEnv.POSTGRES_PASSWORD=UnigapPostgres@123' \
-      --conf 'spark.executorEnv.POSTGRES_HOST=postgres' \
-      --conf 'spark.executorEnv.POSTGRES_PORT=5432' \
+      --conf 'spark.yarn.appMasterEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password}' \
+      --conf 'spark.yarn.appMasterEnv.POSTGRES_HOST=${POSTGRES_HOST:-postgres}' \
+      --conf 'spark.yarn.appMasterEnv.POSTGRES_PORT=${POSTGRES_PORT:-5432}' \
+      --conf 'spark.executorEnv.POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me_rotate_this_password}' \
+      --conf 'spark.executorEnv.POSTGRES_HOST=${POSTGRES_HOST:-postgres}' \
+      --conf 'spark.executorEnv.POSTGRES_PORT=${POSTGRES_PORT:-5432}' \
       --executor-memory 2G \
       --executor-cores 2 \
       --driver-memory 1G \
